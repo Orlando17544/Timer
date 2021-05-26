@@ -1,0 +1,23 @@
+#!/bin/bash
+
+clear
+read -p "How many minutes and seconds? " minutes seconds
+clear
+echo "Timer started"
+
+sleep ${seconds}s
+
+minutesConsumed=0
+while [[ "$minutesConsumed" -ne "$minutes" ]]; do
+	sleep 1m
+	clear
+	minutesConsumed=$((minutesConsumed + 1))
+	echo "Timer started"
+	echo "Remain: $((minutes-minutesConsumed)) minutes"
+done
+
+clear
+echo "Timer ended"
+mpv ~/Música/bash/timer.mp3 &> /dev/null &
+read -p "Press enter to finish -> "
+kill $!
