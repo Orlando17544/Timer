@@ -18,6 +18,12 @@ done
 
 clear
 echo "Timer ended"
-mpv ~/Música/bash/timer.mp3 &> /dev/null &
+# if headphones are unpluged (https://askubuntu.com/questions/133809/mute-sound-on-headphone-unplug)
+if [[ "$(cat '/proc/asound/card0/codec#0' | head -n 140 | tail -n 1 | grep -Po 'OUT')" == "OUT" ]]; then
+	mpv ~/Música/bash/timer.mp3 &> /dev/null &
+else
+	mpv --volume 50 ~/Música/bash/timer.mp3 &> /dev/null &
+fi
+
 read -p "Press enter to finish -> "
 kill $!
