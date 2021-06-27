@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# It is neccesary acpid
+
+if [[ "$(ps aux | grep -P acpi_listen | grep -Pv 'grep')" == "" ]]; then
+	systemctl start acpid.service
+	acpi_listen | grep -Pi 'headphone' > ~/tmp/headphonesStatus &
+fi
+
+playMusic () {
+	if [[ "$(cat ~/tmp/headphonesStatus | tail -n 1 | grep -P 'unplug')" != "" ]]; then
+		mpv ~/Música/bash/timer.mp3 &> /dev/null &
+	else
+		mpv --volume 50 ~/Música/bash/timer.mp3 &> /dev/null &
+	fi
+}
+
 clear
 read -p "How many minutes and seconds? " minutes seconds
 clear
@@ -18,12 +33,7 @@ done
 
 clear
 echo "Timer ended"
-# if headphones are unpluged (https://askubuntu.com/questions/133809/mute-sound-on-headphone-unplug)
-if [[ "$(cat '/proc/asound/card0/codec#0' | head -n 140 | tail -n 1 | grep -Po 'OUT')" == "OUT" ]]; then
-	mpv ~/Música/bash/timer.mp3 &> /dev/null &
-else
-	mpv --volume 50 ~/Música/bash/timer.mp3 &> /dev/null &
-fi
+playMusic
 
 read -p "Press enter to finish -> "
 kill $!
